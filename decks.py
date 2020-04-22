@@ -11,15 +11,16 @@ class Card:
         Getters are number and suits methods
         numbers and suits retruns the possible values
     '''
-    __suits = ['D', 'S', 'H', 'C']
-    __numbers = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K']
+    #static properties
+    suits = ['D', 'S', 'H', 'C']
+    numbers = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K']
 
     def __init__(self, number, suit):
-        if suit.upper() in self.__suits:
+        if suit.upper() in Card.suits:
             self.__suit = suit
         else:
             raise ValueError('Unrecognized suit')
-        if str(number).upper() in self.__numbers:
+        if str(number).upper() in Card.numbers:
             self.__number = number
         else:
             raise ValueError('Unrecognized card number')
@@ -27,13 +28,13 @@ class Card:
     def __repr__(self):
         return str(f"{self.__number}.{self.__suit}")
 
+    #protected properties
     number = property(fget=lambda self: self.__number)
     suit = property(fget=lambda self: self.__suit)
-    suits = property(fget=lambda self: self.__suits)
-    numbers = property(fget=lambda self: self.__numbers)
 
 
-class Deck(Card):
+
+class Deck:
     ''' Deck class - works as a stack
     Properties:
         __set: list of cards
@@ -43,10 +44,9 @@ class Deck(Card):
         shuffle: reorder the deck ramdomly
     '''
     def __init__(self):
-        super().__init__('A', 'D')
         self.__set = list()
-        for n in self.suits:
-            self.__set += list(Card(number=i, suit=n) for i in self.numbers)
+        for n in Card.suits:
+            self.__set += list(Card(number=i, suit=n) for i in Card.numbers)
 
     def __len__(self):
         return len(self.__set)
@@ -83,6 +83,7 @@ class Player:
         return len(self.__hand)
 
     hand = property(fget=lambda self: self.__hand)
+    name = property(fget=lambda self: self.__name)
 
     def isNpc(self):
         return self.__npc

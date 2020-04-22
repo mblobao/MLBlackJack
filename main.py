@@ -1,7 +1,10 @@
 #init file for BlackJack Game
-from blackjack import *
+from blackjack import BlackJack
 
 if __name__ == '__main__':
-    game = BlackJack(['Тиаго','Marcelf'], 2)
+    game = BlackJack(
+        names=['Тиаго', 'Marcelf'],
+        players=3
+    )
     game.start()
     game.roll()

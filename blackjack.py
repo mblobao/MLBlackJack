@@ -1,4 +1,4 @@
-from decks import *
+from decks import Player
 
 
 class BJPlayer(Player):
@@ -43,7 +43,7 @@ class BlackJack:
     ''' BlackJackClass - Main actions for the game
     '''
 
-    def __init__(self, *names, players=2):
+    def __init__(self, names, players=2):
         if players < len(names):
             players = len(names) + 1
         self.players = [BJPlayer(name=nome, npc=False) for nome in names]
@@ -79,7 +79,7 @@ class BlackJack:
             result = {'asks': 0, 'non-asks': 0, 'unknown': play}
             for player in self.players:
                 if not player.burn:
-                    if player.isNpc:
+                    if player.isNpc():
                         if round(random()) == 1:
                             result['asks'] += 1
                             result['unknown'] -= 1
@@ -88,17 +88,17 @@ class BlackJack:
                             result['non-asks'] += 1
                             result['unknown'] -= 1
                     else:
-                        adver = {play.nome: f"{len(play)} cards" for play in self.players}
+                        adver = {play.name: f"{len(play)} cards" for play in self.players}
                         ask = input(str(f"Opponent:\n"
                                         f"{adver}"
-                                        f"Your cards {[card for card in player.cartas]}\n"
+                                        f"Your cards {[card for card in player.hand]}\n"
                                         f"Draw a card? (y/n):\n"))
                         while ask.lower() not in ['y', 'n']:
                             ask = input("Sorry?!\nWanna draw a card? (y/n):\n")
                         if ask.lower() == 'y':
                             result['asks'] += 1
                             result['unknown'] -= 1
-                            player.receber(self.deck.draw())
+                            player.get_card(self.deck.draw())
                         else: # if 'n'
                             result['non-asks'] += 1
                             result['unknown'] -= 1
