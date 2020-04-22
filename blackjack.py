@@ -1,7 +1,13 @@
-from decks import Player
+from decks import *
 
 
 class BJPlayer(Player):
+    ''' BJPlayer - Black Jack player heritage from player
+    Properties:
+        cash
+    Methods:
+        __abs__: sum of the cards hand according to the rules
+    '''
     def __init__(self, name, npc, dificulty='normal', cash=0):
         super().__init__(name=name, npc=npc, dificulty=dificulty)
         self.__cash = round(float(cash), 2)
@@ -33,16 +39,19 @@ class BJPlayer(Player):
         self.__cash = round(self.__cash, 2)
 
 
-class Rodada:
-    def __init__(self, *nomes, players=2):
-        if players < len(nomes):
-            players = len(nomes) + 1
-        self.players = [Jogador(nome=nome, npc=False) for nome in nomes]
+class BlackJack:
+    ''' BlackJackClass - Main actions for the game
+    '''
+
+    def __init__(self, *names, players=2):
+        if players < len(names):
+            players = len(names) + 1
+        self.players = [BJPlayer(name=nome, npc=False) for nome in names]
         for i in range(players - len(self.players)):
-            self.players.append(Jogador(nome=f'JungKook{i}', npc=True))
+            self.players.append(BJPlayer(name=f'JungKook{i}', npc=True))
         if len(self.players) > 7:
-            raise Exception("Não pode ter mais de 7 jogadores")
-        self.deck = Baralho()
+            raise Exception("No more than 7 players, please...")
+        self.deck = Deck()
 
     def __enter__(self):
         self.start()
@@ -53,12 +62,14 @@ class Rodada:
             raise exc_val
 
     def start(self):
-        self.deck.embararalhar()
+        # Initialize each player hand with 2 cards
+        self.deck.shuffle()
         while sum(len(player) for player in self.players) < 2 * len(self.players):
             for player in self.players:
-                player.receber(self.deck.draw())
+                player.get_card(self.deck.draw())
 
     def roll(self):
+        # Play a round
         play = sum(1 for player in self.players if not player.burn)
         result = {'asks': 0, 'non-asks': 0, 'unknown': play}
         asks = play
@@ -68,27 +79,27 @@ class Rodada:
             result = {'asks': 0, 'non-asks': 0, 'unknown': play}
             for player in self.players:
                 if not player.burn:
-                    if player.npc:
+                    if player.isNpc:
                         if round(random()) == 1:
                             result['asks'] += 1
                             result['unknown'] -= 1
-                            player.receber(self.deck.draw())
+                            player.get_card(self.deck.draw())
                         else:
                             result['non-asks'] += 1
                             result['unknown'] -= 1
                     else:
-                        adver = {play.nome: f"{len(play)} cartas" for play in self.players}
-                        ask = input(str(f"Adversários:\n"
+                        adver = {play.nome: f"{len(play)} cards" for play in self.players}
+                        ask = input(str(f"Opponent:\n"
                                         f"{adver}"
-                                        f"Suas cartas {[card for card in player.cartas]}\n"
-                                        f"Deseja puxar uma carta? (s/n):\n"))
-                        while ask.lower() not in ['s', 'n']:
-                            ask = input("Não entendi!\nDeseja puxar uma carta? (s/n):\n")
-                        if ask.lower() == 's':
+                                        f"Your cards {[card for card in player.cartas]}\n"
+                                        f"Draw a card? (y/n):\n"))
+                        while ask.lower() not in ['y', 'n']:
+                            ask = input("Sorry?!\nWanna draw a card? (y/n):\n")
+                        if ask.lower() == 'y':
                             result['asks'] += 1
                             result['unknown'] -= 1
                             player.receber(self.deck.draw())
-                        else:
+                        else: # if 'n'
                             result['non-asks'] += 1
                             result['unknown'] -= 1
                 player.last_roll = result

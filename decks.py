@@ -3,6 +3,14 @@ from numpy.random import shuffle, random
 
 
 class Card:
+    ''' Card class
+    Properties:
+        number: value of the card ( from A to K )
+        suit: suit of the card ( restricted values A, S, H or C )
+    Methods:
+        Getters are number and suits methods
+        numbers and suits retruns the possible values
+    '''
     __suits = ['D', 'S', 'H', 'C']
     __numbers = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K']
 
@@ -26,6 +34,14 @@ class Card:
 
 
 class Deck(Card):
+    ''' Deck class - works as a stack
+    Properties:
+        __set: list of cards
+    Methods:
+        draw: pops one card from the deck
+        reset: puts back all cards
+        shuffle: reorder the deck ramdomly
+    '''
     def __init__(self):
         super().__init__('A', 'D')
         self.__set = list()
@@ -49,6 +65,14 @@ class Deck(Card):
 
 
 class Player:
+    ''' Player class
+    Properties:
+        get_card: list of cards
+    Methods:
+        get_card: add card to players hand
+        drop_card: remove card from players hand
+        clear_hand: removes all cards from players hand
+    '''
     def __init__(self, name, npc, dificulty='normal'):
         self.__name = str(name)
         self.__npc = bool(npc)
@@ -59,6 +83,9 @@ class Player:
         return len(self.__hand)
 
     hand = property(fget=lambda self: self.__hand)
+
+    def isNpc(self):
+        return self.__npc
 
     def get_card(self, card):
         self.__hand.append(card)
