@@ -1,4 +1,5 @@
-from numpy.random import shuffle
+from numpy import inf
+from numpy.random import shuffle, random
 
 
 class Card:
@@ -18,6 +19,8 @@ class Card:
     def __repr__(self):
         return str(f"{self.__number}.{self.__suit}")
 
+    number = property(fget=lambda self: self.__number)
+    suit = property(fget=lambda self: self.__suit)
     suits = property(fget=lambda self: self.__suits)
     numbers = property(fget=lambda self: self.__numbers)
 
@@ -31,21 +34,21 @@ class Deck(Card):
 
     def __len__(self):
         return len(self.__set)
-    
+
     def shuffle(self):
         self.__init__()
         shuffle(self.__set)
 
     def reset(self):
         self.__init__()
-    
+
     def draw(self):
         card = self.__set[0]
         self.__set.pop(0)
         return card
 
 
-class Jogador:
+class Player:
     def __init__(self, name, npc, dificulty='normal'):
         self.__name = str(name)
         self.__npc = bool(npc)
