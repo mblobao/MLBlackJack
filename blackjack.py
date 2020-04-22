@@ -1,90 +1,36 @@
-from numpy import inf
-from numpy.random import shuffle, random
+from decks import Player
 
 
-class Carta:
-    __naipes = ['O', 'E', 'C', 'P']
-    __numeros = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K']
-
-    def __init__(self, numero, naipe,):
-        if naipe.upper() in self.__naipes:
-            self.naipe = naipe
-        else:
-            raise ValueError('Naipe não reconhecido')
-        if str(numero).upper() in self.__numeros:
-            self.numero = numero
-        else:
-            raise ValueError('Numero de carta não reconhecido')
-
-    def __repr__(self):
-        return str(f"{self.numero}.{self.naipe}")
-
-    @property
-    def valor(self):
-        return self.numero if type(self.numero) is int else 10 if self.numero in ['J', 'Q', 'K'] else 11
-
-
-class Baralho:
-    def __init__(self):
-        self.deck = list()
-        for n in ['O', 'E', 'C', 'P']:
-            self.deck += list(Carta(numero=i, naipe=n) for i in ['A', 2, 3, 4, 5, 6, 7, 8, 9, 10, 'J', 'Q', 'K'])
-        self.deck = list(self.deck)
-
-    def embararalhar(self):
-        self.__init__()
-        shuffle(self.deck)
-
-    def draw(self):
-        card = self.deck[0]
-        self.deck.pop(0)
-        return card
-
-
-class Jogador:
-    def __init__(self, nome, npc, dificuldade='easy'):
-        self.nome = nome
-        self.npc = bool(npc)
-        self.cartas = list()
-        self.dificuldade = dificuldade
-        self.last_roll = {'asks': 0, 'non-asks': 0, 'unknown': 0}
-
-    def __len__(self):
-        return len(self.cartas)
-
-    @property
-    def deck(self):
-        main = {'A': 0, '2': 0, '3': 0, '4': 0, '5': 0, '6': 0, '7': 0, '8': 0, '9': 0, '10': 0, 'J': 0, 'Q': 0, 'K': 0}
-        for card in self.cartas:
-            main[str(card.numero).upper()] += 1
-        return main
-
-    @property
-    def burn(self):
-        return abs(self) > 21
-
-    @property
-    def result(self):
-        if abs(self) == 21:
-            return 2
-        if abs(self) < 21:
-            return 1
-        else:
-            return 0
+class BJPlayer(Player):
+    def __init__(self, name, npc, dificulty='normal', cash=0):
+        super().__init__(name=name, npc=npc, dificulty=dificulty)
+        self.__cash = round(float(cash), 2)
 
     def __abs__(self):
-        soma = sum(carta.valor for carta in self.cartas)
-        as_ = 0
-        for carta in self.cartas:
-            if carta.numero == 'A':
-                as_ += 1
-        for i in range(as_):
-            if soma > 21:
-                soma = soma - 10
-        return soma
+        val, na = 0, 0
+        for card in self.hand:
+            if card.number.isnumeric():
+                val += int(card.number)
+            elif card.number in ['J', 'Q', 'K']:
+                val += 10
+            elif card.number == 'A':
+                val += 11
+                na += 1
+        for i in range(na):
+            if val > 21:
+                val -= 10
+        return val
 
-    def receber(self, carta):
-        self.cartas.append(carta)
+    burn = property(fget=lambda self: abs(self) > 21)
+
+    @property
+    def cash(self):
+        return self.__cash
+
+    @cash.setter
+    def cash(self, value):
+        self.__cash += value
+        self.__cash = round(self.__cash, 2)
 
 
 class Rodada:
@@ -148,8 +94,3 @@ class Rodada:
                 player.last_roll = result
             asks = result['asks']
         return result
-
-
-if __name__ == '__main__':
-    with Rodada('Ester') as rod:
-        rod.roll()
