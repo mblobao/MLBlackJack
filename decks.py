@@ -1,17 +1,16 @@
-from numpy import inf
-from numpy.random import shuffle, random
+from numpy.random import shuffle
 
 
 class Card:
-    ''' Card class
+    """ Card class
     Properties:
         number: value of the card ( from A to K )
         suit: suit of the card ( restricted values A, S, H or C )
     Methods:
         Getters are number and suits methods
         numbers and suits retruns the possible values
-    '''
-    #static properties
+    """
+    # static properties
     suits = ['D', 'S', 'H', 'C']
     numbers = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K']
 
@@ -28,21 +27,20 @@ class Card:
     def __repr__(self):
         return str(f"{self.__number}.{self.__suit}")
 
-    #protected properties
+    # protected properties
     number = property(fget=lambda self: self.__number)
     suit = property(fget=lambda self: self.__suit)
 
 
-
 class Deck:
-    ''' Deck class - works as a stack
+    """ Deck class - works as a stack
     Properties:
         __set: list of cards
     Methods:
         draw: pops one card from the deck
         reset: puts back all cards
         shuffle: reorder the deck ramdomly
-    '''
+    """
     def __init__(self):
         self.__set = list()
         for n in Card.suits:
@@ -65,14 +63,14 @@ class Deck:
 
 
 class Player:
-    ''' Player class
+    """ Player class
     Properties:
         get_card: list of cards
     Methods:
         get_card: add card to players hand
         drop_card: remove card from players hand
         clear_hand: removes all cards from players hand
-    '''
+    """
     def __init__(self, name, npc, dificulty='normal'):
         self.__name = str(name)
         self.__npc = bool(npc)
@@ -81,12 +79,11 @@ class Player:
 
     def __len__(self):
         return len(self.__hand)
-
+    
+    # protected properties
     hand = property(fget=lambda self: self.__hand)
     name = property(fget=lambda self: self.__name)
-
-    def isNpc(self):
-        return self.__npc
+    is_npc = property(fget=lambda self: self.__npc)
 
     def get_card(self, card):
         self.__hand.append(card)
