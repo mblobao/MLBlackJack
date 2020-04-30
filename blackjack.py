@@ -48,7 +48,7 @@ class BlackJack:
             players = len(names) + 1
         self.players = [BJPlayer(name=nome, npc=False) for nome in names]
         for i in range(players - len(self.players)):
-            self.players.append(BJPlayer(name=f'JungKook{i}', npc=True))
+            self.players.append(BJPlayer(name=f'NPC-{i}', npc=True))
         if len(self.players) > 7:
             raise Exception("No more than 7 players, please...")
         self.deck = Deck()
