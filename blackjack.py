@@ -1,5 +1,5 @@
 from numpy.random import random
-from MLBlackJack.decks import Player, Deck
+from decks import Player, Deck
 
 
 class BJPlayer(Player):
@@ -91,7 +91,11 @@ class BlackJack:
                     player.get_card(self.deck.draw())
 
     def roll(self):  # Play a round
-        plays = sum(1 for player in self.players if not player.burn or not (player.name == 'Dealer' and player.is_npc))
+        plays = 0
+        for player in self.players:
+            if not player.burn:
+                if not (player.name == 'Dealer' and player.is_npc):
+                    plays += 1
         result = {'asks': 0, 'non-asks': 0, 'unknown': plays}  # plays counts the number of players in the roll
         while result['unknown'] > 0:
             for player in self.players:
@@ -99,10 +103,14 @@ class BlackJack:
                     continue
                 if not player.burn:
                     if player.is_npc:
-                        if round(random()) == 1:  # Modify with machine learning decision making in future version
+                        draws = round(random())
+                        print(draws)
+                        if draws == 1:  # Modify with machine learning decision making in future version
                             result['asks'] += 1
                             result['unknown'] -= 1
                             player.get_card(self.deck.draw())
+                            if player.burn:
+                                print(f'\n==========\n{player.name} BURNS\n===========\n')
                         else:
                             result['non-asks'] += 1
                             result['unknown'] -= 1
@@ -111,9 +119,11 @@ class BlackJack:
                             adver = {play.name: f"{len(play)} cards" for play in self.players}
                         else:
                             adver = {play.name: f"{play.hand[0]} => {len(play)} cards" for play in self.players}
-                        ask = input(str(f"Opponent:\n"
-                                        f"{adver}"
-                                        f"Your cards {[card for card in player.hand]}\n"
+                        ask = input(str("\n\n"
+                                        f"Player: {player.name}\n\n"
+                                        f"Opponent:\n"
+                                        f"{adver}\n"
+                                        f"Your cards {[card for card in player.hand]} Sum = {abs(player)}\n\n"
                                         f"Draw a card? (y/n):\n"))
                         while ask.lower() not in ['y', 'n']:
                             ask = input("Sorry?!\nWanna draw a card? (y/n):\n")
@@ -121,6 +131,8 @@ class BlackJack:
                             result['asks'] += 1
                             result['unknown'] -= 1
                             player.get_card(self.deck.draw())
+                            if player.burn:
+                                print(f'\n==========\n{player.name} BURNS\n===========\n')
                         else:  # if 'n'
                             result['non-asks'] += 1
                             result['unknown'] -= 1
@@ -128,9 +140,10 @@ class BlackJack:
             asks = result['asks']
         return result
 
-    def game(self):
-        while self.roll()['asks'] == 0:
-            pass
+    def play(self):
+        res = 1
+        while res > 0:
+            res = self.roll()['asks']
         result = {player.name: ('Burn' if player.burn else 'BlackJack' if abs(player) == 21 else abs(player))
                   for player in self.players}
         print(result)
