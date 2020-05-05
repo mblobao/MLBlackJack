@@ -76,6 +76,7 @@ class Player:
         self.__npc = bool(npc)
         self.__hand = list()
         self.__dificulty = dificulty
+        self.__last_row = list()
 
     def __len__(self):
         return len(self.__hand)
@@ -84,6 +85,14 @@ class Player:
     hand = property(fget=lambda self: self.__hand)
     name = property(fget=lambda self: self.__name)
     is_npc = property(fget=lambda self: self.__npc)
+
+    @property
+    def last_row(self):
+        return None
+
+    @last_row.setter
+    def last_row(self, value):
+        self.__last_row.append(value)
 
     def get_card(self, card):
         self.__hand.append(card)

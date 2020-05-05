@@ -1,5 +1,5 @@
-#init file for BlackJack Game
-from blackjack import BlackJack
+# init file for BlackJack Game
+from MLBlackJack.blackjack import BlackJack
 
 if __name__ == '__main__':
     game = BlackJack(
