@@ -1,7 +1,6 @@
 from numpy.random import random
 from decks import Player, Deck
 
-
 class BJPlayer(Player):
     """ BJPlayer - Black Jack player heritage from player
     Properties:
@@ -24,6 +23,7 @@ class BJPlayer(Player):
             elif card.number == 'A':
                 val += 11
                 na += 1
+        # pylint: disable=unused-variable
         for i in range(na):
             if val > 21:
                 val -= 10
@@ -57,9 +57,10 @@ class BlackJack:
         dark_dealer = 2
         one_up_dealer = 3
 
-    def __init__(self, *names, bet=100, cash=500, players=2, mode=Mode.dark):
+    def __init__(self, *names, console, bet=100, cash=500, players=2, mode=Mode.dark):
         self.__mode = mode
         self.__bet = bet
+        self.__csl = console
         if players < len(names):
             players = len(names) + 1
         self.players = [BJPlayer(name=nome, npc=False, cash=cash) for nome in names]
@@ -79,6 +80,8 @@ class BlackJack:
         if exc_val is not None:
             raise exc_val
 
+        
+    # ------------------- functions for playing ----------------------------------
     def start(self):
         # Initialize each player hand with 2 cards
         self.deck.shuffle()
@@ -104,13 +107,12 @@ class BlackJack:
                 if not player.burn:
                     if player.is_npc:
                         draws = round(random())
-                        print(draws)
                         if draws == 1:  # Modify with machine learning decision making in future version
                             result['asks'] += 1
                             result['unknown'] -= 1
                             player.get_card(self.deck.draw())
                             if player.burn:
-                                print(f'\n==========\n{player.name} BURNS\n===========\n')
+                                self.__csl.print(f'\n==========\n{player.name} BURNS\n===========\n',self.__csl.textColor.RED)
                         else:
                             result['non-asks'] += 1
                             result['unknown'] -= 1
@@ -119,20 +121,21 @@ class BlackJack:
                             adver = {play.name: f"{len(play)} cards" for play in self.players}
                         else:
                             adver = {play.name: f"{play.hand[0]} => {len(play)} cards" for play in self.players}
-                        ask = input(str("\n\n"
-                                        f"Player: {player.name}\n\n"
-                                        f"Opponent:\n"
-                                        f"{adver}\n"
-                                        f"Your cards {[card for card in player.hand]} Sum = {abs(player)}\n\n"
-                                        f"Draw a card? (y/n):\n"))
+                        self.__csl.print(str("\n\n"
+                            f"Player: {player.name}\n\n"
+                            f"Opponent:\n"
+                            f"{adver}\n"
+                            f"Your cards {[card for card in player.hand]} Sum = {abs(player)}\n\n"
+                            f"Draw a card? (y/n):\n"))
+                        ask = input()
                         while ask.lower() not in ['y', 'n']:
-                            ask = input("Sorry?!\nWanna draw a card? (y/n):\n")
+                            ask = input(f"{self.__csl.textColor.YELLOW}Sorry?!\n{self.__csl.style.RESET_ALL}Wanna draw a card? (y/n):\n")
                         if ask.lower() == 'y':
                             result['asks'] += 1
                             result['unknown'] -= 1
                             player.get_card(self.deck.draw())
                             if player.burn:
-                                print(f'\n==========\n{player.name} BURNS\n===========\n')
+                                self.__csl.print(f'\n==========\n{player.name} BURNS\n===========\n',self.__csl.textColor.RED)
                         else:  # if 'n'
                             result['non-asks'] += 1
                             result['unknown'] -= 1
@@ -143,10 +146,12 @@ class BlackJack:
     def play(self):
         res = 1
         while res > 0:
+            self.__csl.clear()
             res = self.roll()['asks']
+        self.__csl.clear()
         result = {player.name: ('Burn' if player.burn else 'BlackJack' if abs(player) == 21 else abs(player))
                   for player in self.players}
-        print(result)
+        self.__csl.print(result)
         val = max(abs(player) for player in self.players if not player.burn)
         lista = [player for player in self.players if abs(player) == val]
         for player in self.players:
@@ -154,3 +159,11 @@ class BlackJack:
                 player += self.__bet * len(self.players) / len(lista)
             else:
                 player -= self.__bet
+
+    # ------------------- TO DO ----------------------------------
+    def showTable():
+        return
+    def showPlayerOptions():
+        return
+    def showResults():
+        return
