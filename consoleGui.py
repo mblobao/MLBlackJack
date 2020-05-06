@@ -1,8 +1,8 @@
-from colorama import Fore, Back, Style # colored printing for default console
-from curses import wrapper # ncurses module
-
+from colorama import Fore, Back, Style  # colored printing for default console
+from curses import wrapper  # ncurses module
 import sys
 import os
+
 
 class Console:
     """ Console class
@@ -16,14 +16,13 @@ class Console:
         print - print on console accordingly to selected mode        
         clear - clear screen using provided resources to do it
     """
-
-    ''' ----------------- STATIC ATRIBUTES ----------------- '''
+    # ----------------- STATIC ATRIBUTES -----------------
     # constants
-    class mode:
+    class Mode:
         CURSES_MODE = 0
         DEFAULT_MODE = 1
 
-    class character:
+    class Character:
         ENTER_CHAR = '\n'
         SPACE_CHAR = ' '
 
@@ -37,39 +36,31 @@ class Console:
     # outputBuffer
 
     # Mode Getters
-    def __isCursesMode__(self):
-        return True if self.__mode == self.mode.CURSES_MODE else False
-    def __isDefaultMode__(self):
-        return True if self.__mode == self.mode.DEFAULT_MODE else False
+    __isCursesMode__ = property(fget=lambda self: True if self.__mode == self.Mode.CURSES_MODE else False)
+    __isDefaultMode__ = property(fget=lambda self: True if self.__mode == self.Mode.DEFAULT_MODE else False)
 
     ''' ----------------- PUBLIC ATRIBUTES ----------------- '''
-    def __init__(self,mode):
+    def __init__(self, mode):
         self.__mode = mode
         try:
             self.__columns, self.__rows = os.get_terminal_size(0)
         except OSError:
             self.__columns, self.__rows = os.get_terminal_size(1)
 
-    def print(self,inputString,color=Style.RESET_ALL):
-        if self.__isCursesMode__():
+    def print(self, inputString, color=Style.RESET_ALL):
+        if self.__isCursesMode__:
             pass
-        if self.__isDefaultMode__():
+        if self.__isDefaultMode__:
             sys.stdout.write(color)
             sys.stdout.write(str(inputString))
             sys.stdout.write(Style.RESET_ALL)
 
-
-    
     def clear(self):
-        if self.__isCursesMode__():
+        if self.__isCursesMode__:
             pass
-        if self.__isDefaultMode__():
+        if self.__isDefaultMode__:
             returns = ''
             # pylint: disable=unused-variable
             for i in range(self.__columns):
-                returns += self.character.ENTER_CHAR
+                returns += self.Character.ENTER_CHAR
             print(returns)
-
-
-
-

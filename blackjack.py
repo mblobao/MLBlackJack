@@ -1,6 +1,7 @@
 from numpy.random import random
 from decks import Player, Deck
 
+
 class BJPlayer(Player):
     """ BJPlayer - Black Jack player heritage from player
     Properties:
@@ -80,7 +81,6 @@ class BlackJack:
         if exc_val is not None:
             raise exc_val
 
-        
     # ------------------- functions for playing ----------------------------------
     def start(self):
         # Initialize each player hand with 2 cards
@@ -112,7 +112,8 @@ class BlackJack:
                             result['unknown'] -= 1
                             player.get_card(self.deck.draw())
                             if player.burn:
-                                self.__csl.print(f'\n==========\n{player.name} BURNS\n===========\n',self.__csl.textColor.RED)
+                                self.__csl.print(f'\n==========\n{player.name} BURNS\n===========\n',
+                                                 self.__csl.textColor.RED)
                         else:
                             result['non-asks'] += 1
                             result['unknown'] -= 1
@@ -129,13 +130,15 @@ class BlackJack:
                             f"Draw a card? (y/n):\n"))
                         ask = input()
                         while ask.lower() not in ['y', 'n']:
-                            ask = input(f"{self.__csl.textColor.YELLOW}Sorry?!\n{self.__csl.style.RESET_ALL}Wanna draw a card? (y/n):\n")
+                            ask = input(f"{self.__csl.textColor.YELLOW}Sorry?!\n{self.__csl.style.RESET_ALL}"
+                                        f"Wanna draw a card? (y/n):\n")
                         if ask.lower() == 'y':
                             result['asks'] += 1
                             result['unknown'] -= 1
                             player.get_card(self.deck.draw())
                             if player.burn:
-                                self.__csl.print(f'\n==========\n{player.name} BURNS\n===========\n',self.__csl.textColor.RED)
+                                self.__csl.print(f'\n==========\n{player.name} BURNS\n===========\n',
+                                                 self.__csl.textColor.RED)
                         else:  # if 'n'
                             result['non-asks'] += 1
                             result['unknown'] -= 1
@@ -160,10 +163,12 @@ class BlackJack:
             else:
                 player -= self.__bet
 
-    # ------------------- TO DO ----------------------------------
+    # ------------------- TODO ----------------------------------
     def showTable():
-        return
+        pass
+
     def showPlayerOptions():
-        return
+        pass
+
     def showResults():
-        return
+        pass
