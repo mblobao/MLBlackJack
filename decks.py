@@ -11,12 +11,13 @@ class Card:
         numbers and suits retruns the possible values
     """
     # static properties
-    suits = ['D', 'S', 'H', 'C']
+    suits = ['♢', '♠', '♡', '♣']
+    suitcheck = {'D': '♢', 'S': '♠', 'H': '♡', 'C': '♣'}
     numbers = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K']
 
     def __init__(self, number, suit):
-        if suit.upper() in Card.suits:
-            self.__suit = suit
+        if suit.upper() in Card.suitcheck.keys():
+            self.__suit = Card.suitcheck[suit.upper()]
         else:
             raise ValueError('Unrecognized suit')
         if str(number).upper() in Card.numbers:
@@ -43,7 +44,7 @@ class Deck:
     """
     def __init__(self):
         self.__set = list()
-        for n in Card.suits:
+        for n in Card.suitcheck.keys():
             self.__set += list(Card(number=i, suit=n) for i in Card.numbers)
 
     def __len__(self):
