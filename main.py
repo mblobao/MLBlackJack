@@ -1,3 +1,8 @@
+# Allow running from subfolder
+from sys import path
+from os import getcwd
+from os.path import join
+path.append(join(getcwd(), 'MLBlackJack'))
 #init class for handling output
 from consoleGui import Console
 
